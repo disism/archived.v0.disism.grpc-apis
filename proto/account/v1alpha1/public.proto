@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package proto.account.v1alpha1;
+option go_package = "v1alpha1/account";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service PublicService {
+
+  rpc GetVersion (google.protobuf.Empty) returns (GetVersionResponse) {
+    option (google.api.http) = {
+      get: "/_accounts/v1/version",
+    };
+  }
+
+  // Open API routing for the ActivityPub protocol.
+  // ActivityPub https://www.w3.org/TR/activitypub/
+  // HTTP API for public query of ActivityPub.
+  // ActivityPub WebFinger https://github.com/w3c/activitypub/issues/194 .
+  rpc GetWebfinger(GetWebfingerRequest) returns (GetWebfingerResponse) {
+    option (google.api.http) = {
+      get: "/.well-known/webfinger"
+    };
+  }
+}
+
+message GetVersionResponse {
+  string message = 1;
+}
+
+message GetWebfingerRequest {
+  string resource = 1;
+}
+
+message GetWebfingerResponse {
+  message Link {
+    string rel = 1;
+    string type = 2;
+    string href = 3;
+  }
+  string subject = 1;
+  repeated string aliases = 2;
+  repeated Link links = 3;
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+import "google/api/annotations.proto";
+import "proto/streaming/v1alpha1/data.proto";
+import "buf/validate/validate.proto";
+
+service FileService {
+  rpc CreateFile (CreateFileRequest) returns (CreateFileResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/files",
+      body: "*"
+    };
+  }
+}
+
+message CreateFile {
+  string cid = 1 [
+    (buf.validate.field).required = true,
+    json_name = "cid"
+  ];
+  string name = 2[
+    (buf.validate.field).required = true,
+    json_name = "name"
+  ];
+  uint64 size = 3[
+    (buf.validate.field).required = true,
+    json_name = "size"
+  ];
+}
+
+message CreateFileRequest {
+  repeated CreateFile files = 1 [
+    (buf.validate.field).required = true,
+    json_name = "files"
+  ];
+}
+
+message CreateFileResponse {
+  string message = 1;
+  repeated FileData files = 2;
+  repeated FileData exists = 3;
+}

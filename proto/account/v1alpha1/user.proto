@@ -1,0 +1,236 @@
+syntax = "proto3";
+
+package proto.account.v1alpha1;
+option go_package = "v1alpha1/account";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "proto/account/v1alpha1/avatar.proto";
+
+service UserService {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/_accounts/v1/user",
+      body: "*"
+    };
+  }
+
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+
+  rpc EditUser (EditUserRequest) returns (EditUserResponse) {
+    option (google.api.http) = {
+      put: "/_accounts/v1/user",
+      body: "*"
+    };
+  }
+
+  rpc EditUsername (EditUsernameRequest) returns (EditUsernameResponse) {
+    option (google.api.http) = {
+      patch: "/_accounts/v1/user/username",
+      body: "*"
+    };
+  }
+
+  rpc EditEmail (EditEmailRequest) returns (EditEmailResponse) {
+    option (google.api.http) = {
+      patch: "/_accounts/v1/user/email",
+      body: "*"
+    };
+  }
+
+  rpc EditPassword (EditPasswordRequest) returns (EditPasswordResponse) {
+    option (google.api.http) = {
+      patch: "/_accounts/v1/user/password",
+      body: "*"
+    };
+  }
+
+  rpc EditPrivate (EditPrivateRequest) returns (EditPrivateResponse) {
+    option (google.api.http) = {
+      patch: "/_accounts/v1/user/private",
+      body: "*"
+    };
+  }
+
+  rpc EditUserAvatar (EditUserAvatarRequest) returns (EditUserAvatarResponse) {
+    option (google.api.http) = {
+      patch: "/_accounts/v1/user/avatar",
+      body: "*"
+    };
+  }
+
+  rpc IAm (google.protobuf.Empty) returns (IAmResponse) {
+    option (google.api.http) = {
+      get: "/_accounts/v1/user",
+    };
+  }
+
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/_accounts/v1/user",
+      body: "*"
+    };
+  }
+}
+
+message User {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string username = 4 [json_name = "username"];
+  string email = 5 [json_name = "email"];
+  string name = 6 [json_name = "name"];
+  account.v1alpha1.AvatarData avatar = 7 [json_name = "avatar"];
+  string bio = 8 [json_name = "bio"];
+  bool private = 9 [json_name = "private"];
+  string types = 10 [json_name = "types"];
+}
+
+message UserGetResponse {
+  string message = 1;
+  User user = 2;
+}
+
+message CreateUserRequest {
+  string username = 1 [(buf.validate.field).string = {
+    pattern: "^[a-zA-Z0-9_-]{4,16}$",
+    min_len: 4,
+    max_len: 16,
+  }];
+  string email = 2 [(buf.validate.field).string.email = true];
+  string password = 3 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+}
+
+message CreateUserResponse {
+  string authorization_token = 1 [json_name = "authorization_token"];
+  User user = 2;
+}
+
+message GetUserRequest {
+  oneof param {
+    uint64 id = 1;
+    string email = 2 [(buf.validate.field).string.email = true];
+    string username = 3 [(buf.validate.field).string = {
+      pattern: "^[a-zA-Z0-9_-]{4,16}$",
+      min_len: 4,
+      max_len: 16,
+    }];
+  }
+}
+
+message GetUserResponse {
+  User user = 1;
+  string message = 2;
+}
+
+
+message EditUserRequest {
+  string name = 1 [
+    (buf.validate.field).string.max_len = 50,
+    json_name = "name"
+  ];
+  string bio = 3 [
+    (buf.validate.field).string.max_len = 160,
+    json_name = "bio"
+  ];
+}
+
+message EditUserResponse {
+  User user = 1;
+  string message = 2;
+}
+
+
+message EditUsernameRequest {
+  string username = 1 [(buf.validate.field).string = {
+    pattern: "^[a-zA-Z0-9_-]{4,16}$",
+    min_len: 4,
+    max_len: 16,
+  }];
+  string password = 2 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+}
+
+message EditUsernameResponse {
+  string message = 1;
+}
+
+message EditEmailRequest {
+  string email = 1 [(buf.validate.field).string.email = true];
+  string password = 2 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+}
+
+message EditEmailResponse {
+  string message = 1;
+}
+
+message EditPasswordRequest {
+  string new_password = 1 [
+    (buf.validate.field).string = {
+      pattern: "^.*[A-Z]+.*[0-9].*$",
+      min_len: 7,
+      max_len: 24,
+    },
+    json_name = "new_password"
+  ];
+  string password = 2 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+}
+
+message EditPasswordResponse {
+  string message = 1;
+}
+
+message EditPrivateRequest {
+  bool private = 1;
+  string password = 2 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+}
+
+message EditPrivateResponse {
+  string message = 1;
+}
+
+message EditUserAvatarRequest {
+  uint64 avatar_id = 1 [json_name = "avatar_id"];
+}
+
+message EditUserAvatarResponse {
+  string message = 1;
+}
+
+message IAmResponse {
+  User user = 1;
+  string message = 2;
+}
+
+message DeleteUserRequest {
+  string password = 1 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+}
+
+message DeleteUserResponse {
+  string message = 1;
+}

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package proto.saved.v1alpha1;
+option go_package = "v1alpha1/saved";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "proto/saved/v1alpha1/data.proto";
+
+service FileService {
+  rpc CreateFiles (CreateFilesRequest) returns (CreateFilesResponse) {
+    option (google.api.http) = {
+      post: "/_saved/v1/files",
+      body: "*"
+    };
+  }
+
+  rpc GetFiles (GetFilesRequest) returns (GetFilesResponse) {
+    option (google.api.http) = {
+      get: "/_saved/v1/files",
+    };
+  }
+
+  rpc GetFile (GetFileRequest) returns (GetFileResponse) {
+    option (google.api.http) = {
+      get: "/_saved/v1/files/{id}",
+    };
+  }
+
+  rpc DeleteFile (DeleteFileRequest) returns (DeleteFileResponse) {
+    option (google.api.http) = {
+      delete: "/_saved/v1/files/{id}",
+    };
+  }
+
+}
+
+message CreateFile {
+  string cid = 1;
+  string name = 2;
+  uint64 size = 3;
+  string caption = 4;
+}
+
+message CreateFilesRequest {
+  repeated CreateFile files = 1 [
+    (buf.validate.field).required = true,
+    json_name = "files"
+  ];
+}
+
+message CreateFilesResponse {
+  repeated FileData files = 1;
+  repeated FileWithDirs exists = 2;
+  string message = 3;
+}
+
+message GetFilesRequest {
+  int32 per_page = 1;
+  int32 page = 2;
+  string sort = 3;
+  string direction = 4;
+}
+
+message GetFilesResponse {
+  repeated FileData files = 1;
+  int32 per_page = 2;
+  int32 page = 3;
+  string message = 4;
+}
+
+message GetFileRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetFileResponse {
+  FileData file = 1;
+  string message = 2;
+}
+
+message DeleteFileRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteFileResponse {
+  string message = 1;
+}

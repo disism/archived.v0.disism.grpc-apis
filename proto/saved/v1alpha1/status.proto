@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package proto.saved.v1alpha1;
+option go_package = "v1alpha1/saved";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "proto/saved/v1alpha1/data.proto";
+
+service SavedService {
+  rpc GetActivateStatus (google.protobuf.Empty) returns (GetActivateStatusResponse) {
+    option (google.api.http) = {
+      get: "/_saved/v1/activities",
+    };
+  }
+
+  rpc Activate (ActivateRequest) returns (ActivateResponse) {
+    option (google.api.http) = {
+      post: "/_saved/v1/activities",
+      body: "*"
+    };
+  }
+}
+
+message GetActivateStatusResponse {
+  string status = 1;
+  bool activity = 2;
+  DirData root = 3;
+  repeated DirData dirs = 4;
+  repeated FileData files = 5;
+}
+
+message ActivateRequest {
+  bool activity = 1;
+}
+
+message ActivateResponse {
+  string status = 1;
+  bool activity = 2;
+  int32 file_count = 4;
+  int32 dir_count = 5;
+}

@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+
+import "google/protobuf/timestamp.proto";
+
+message MusicData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string name = 4;
+  double duration = 5;
+
+  string description = 6;
+
+  FileData file = 7;
+
+  MusicAlbumData albums = 8;
+
+  repeated MusicArtistData artists = 9;
+  repeated MusicGenreData genres = 10;
+}
+
+message MusicAlbumData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string title = 4;
+  uint32 year = 5;
+  string description = 6;
+  CoverData cover = 7;
+  repeated MusicArtistData artists = 8;
+}
+
+message MusicArtistData {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message MusicGenreData {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message FileData {
+  uint64 id = 1;
+  string cid = 2;
+  string name = 3;
+  uint64 size = 4;
+}
+
+message CoverData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  FileData file = 4;
+  int32 width = 5;
+  int32 height = 6;
+}
+
+message MusicPlaylistData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string name = 4;
+  string description = 5;
+  CoverData cover = 6;
+  bool private = 7;
+}
+

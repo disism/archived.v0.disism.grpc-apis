@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+import "google/api/annotations.proto";
+import "proto/streaming/v1alpha1/data.proto";
+import "google/api/field_behavior.proto";
+import "buf/validate/validate.proto";
+
+service MusicService {
+
+  rpc GetMusics (GetMusicsRequest) returns (GetMusicsResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/musics",
+    };
+  }
+
+  rpc CreateMusic (CreateMusicRequest) returns (CreateMusicResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics",
+      body: "*"
+    };
+  }
+
+  rpc EditMusic (EditMusicRequest) returns (EditMusicResponse) {
+    option (google.api.http) = {
+      put: "/_streaming/v1/musics/{id}",
+      body: "*"
+    };
+  }
+
+  rpc AddMusic (AddMusicRequest) returns (AddMusicResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics/{id}",
+      body: "*"
+    };
+  }
+
+  rpc RemoveMusic (RemoveMusicRequest) returns (RemoveMusicResponse) {
+    option (google.api.http) = {
+      delete: "/_streaming/v1/musics/{id}",
+      body: "*"
+    };
+  }
+
+}
+
+message GetMusicsRequest {
+  string cid = 1;
+}
+
+message GetMusicsWithCIDResponse {
+  string message = 1;
+  repeated MusicData musics = 2;
+}
+
+message CreateMusic {
+  string cid = 1 [
+    (buf.validate.field).required = true,
+    json_name = "cid"
+  ];
+  string name = 2 [
+    (buf.validate.field).required = true,
+    json_name = "name"
+  ];
+  uint64 size = 3 [
+    (buf.validate.field).required = true,
+    json_name = "size"
+  ];
+  double duration = 4 [
+    (buf.validate.field).required = true,
+    json_name = "duration"
+  ];
+}
+
+message CreateMusicRequest {
+  repeated CreateMusic musics = 1;
+}
+
+message MusicExists {
+  string name = 1;
+  repeated MusicData musics = 2;
+}
+
+message CreateMusicResponse {
+  string message = 1;
+  repeated MusicData musics = 2;
+  repeated MusicExists exists = 3;
+}
+
+message GetMusicsResponse {
+  string message = 1;
+  repeated MusicData musics = 2;
+}
+
+message EditMusicRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2;
+  string description = 3;
+  uint64 album_id = 4;
+  repeated string artist_ids = 5;
+  repeated string genre_ids = 6;
+}
+
+message EditMusicResponse {
+  string message = 1;
+  MusicData music = 2;
+}
+
+
+message AddMusicRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message AddMusicResponse {
+  string message = 1;
+}
+
+message RemoveMusicRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message RemoveMusicResponse {
+  string message = 1;
+}

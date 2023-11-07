@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package proto.account.v1alpha1;
+option go_package = "v1alpha1/account";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/field_behavior.proto";
+
+service AvatarService {
+  rpc CreateAvatar (CreateAvatarRequest) returns (CreateAvatarResponse) {
+    option (google.api.http) = {
+      post: "/_accounts/v1/avatars",
+      body: "*"
+    };
+  }
+
+  rpc GetAvatars (google.protobuf.Empty) returns (GetAvatarsResponse) {
+    option (google.api.http) = {
+      get: "/_accounts/v1/avatars",
+    };
+  }
+
+  rpc DeleteAvatar (DeleteAvatarRequest) returns (DeleteAvatarResponse) {
+    option (google.api.http) = {
+      delete: "/_accounts/v1/avatars/{id}",
+    };
+  }
+}
+
+message AvatarData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  CreateAvatarRequest image = 4;
+}
+
+message CreateAvatarRequest {
+  string cid = 1;
+  string name = 2;
+  uint64 size = 3;
+  int32 width = 4;
+  int32 height = 5;
+}
+
+message CreateAvatarResponse {
+  string message = 1;
+}
+
+message GetAvatarsResponse {
+  repeated AvatarData avatars = 1;
+  string message = 2;
+}
+
+message DeleteAvatarRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteAvatarResponse {
+  string message = 1;
+}

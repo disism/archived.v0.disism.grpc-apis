@@ -1,0 +1,18 @@
+# buf.gen.yaml
+version: v1
+plugins:
+# go
+  - name: go
+    out: go
+# go grpc
+  - name: go-grpc
+    out: go
+    opt: require_unimplemented_servers=false
+# grpc v0.server
+  - name: grpc-gateway
+    out: go
+    opt: allow_delete_body=true
+# grpc validate go
+  - plugin: buf.build/bufbuild/validate-go:v1.0.2
+    out: go
+    opt: gen

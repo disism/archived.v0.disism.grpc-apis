@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+import "google/api/annotations.proto";
+import "proto/streaming/v1alpha1/data.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+
+service MusicAlbumService {
+  rpc CreateAlbum (CreateAlbumRequest) returns (CreateAlbumResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics/albums",
+      body: "*"
+    };
+  }
+
+  rpc GetAlbum (GetAlbumRequest) returns (GetAlbumResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/musics/albums/{id}",
+    };
+  }
+  rpc EditAlbum (EditAlbumRequest) returns (EditAlbumResponse) {
+    option (google.api.http) = {
+      put: "/_streaming/v1/musics/albums/{id}",
+      body: "*"
+    };
+  }
+
+  rpc AddAlbumArtist (AddAlbumArtistRequest) returns (AddAlbumArtistResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics/albums/{id}/artists",
+      body: "*"
+    };
+  }
+
+  rpc RemoveAlbumArtist (RemoveAlbumArtistRequest) returns (RemoveAlbumArtistResponse) {
+    option (google.api.http) = {
+      delete: "/_streaming/v1/musics/albums/{id}/artists",
+      body: "*"
+    };
+  }
+
+  rpc GetAlbums (google.protobuf.Empty) returns (GetAlbumsResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/musics/albums",
+    };
+  }
+
+}
+
+message CreateAlbumRequest {
+  string title = 1;
+  uint32 year = 2;
+  string description = 3;
+  uint64 cover_id = 4;
+  repeated string artist_ids = 5;
+}
+
+message CreateAlbumResponse {
+  string message = 1;
+  MusicAlbumData album = 2;
+}
+
+message GetAlbumRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetAlbumResponse {
+  string message = 1;
+  MusicAlbumData album = 2;
+}
+
+message EditAlbumRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  string title = 2;
+  uint32 year = 3;
+  string description = 4;
+  uint64 cover_id = 5;
+  repeated string artist_ids = 6;
+}
+
+message EditAlbumResponse {
+  string message = 1;
+  MusicAlbumData album = 2;
+}
+
+message GetAlbumsResponse {
+  string message = 1;
+  repeated MusicAlbumData albums = 2;
+}
+
+message AddAlbumArtistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated uint64 artist_ids = 2;
+}
+
+message AddAlbumArtistResponse {
+  string message = 1;
+  repeated MusicArtistData artists = 2;
+}
+
+message RemoveAlbumArtistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated uint64 artist_ids = 2;
+}
+
+message RemoveAlbumArtistResponse {
+  string message = 1;
+  repeated MusicArtistData artists = 2;
+}

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service StreamingService {
+  rpc GetActivateStatus (google.protobuf.Empty) returns (GetActivateStatusResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/activities",
+    };
+  }
+
+  rpc Activate (ActivateRequest) returns (ActivateResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/activities",
+      body: "*"
+    };
+  }
+}
+
+message GetActivateStatusResponse {
+  string status = 1;
+  bool activity = 2;
+}
+
+message ActivateRequest {
+  bool activity = 1;
+}
+
+message ActivateResponse {
+  string status = 1;
+  bool activity = 2;
+}

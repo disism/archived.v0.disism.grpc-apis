@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package proto.account.v1alpha1;
+option go_package = "v1alpha1/account";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "proto/account/v1alpha1/user.proto";
+
+service AuthenticationService {
+  rpc Authentication (AuthenticationRequest) returns (AuthenticationResponse) {
+    option (google.api.http) = {
+      post: "/_accounts/v1/authentication",
+      body: "*"
+    };
+  }
+}
+
+message AuthenticationRequest {
+  oneof auth_type {
+    string email = 1 [(buf.validate.field).string.email = true];
+    string username = 2 [(buf.validate.field).string = {
+      pattern: "^[a-zA-Z0-9_-]{4,16}$",
+      min_len: 4,
+      max_len: 16,
+    }];
+  }
+  string password = 3 [(buf.validate.field).string = {
+    pattern: "^.*[A-Z]+.*[0-9].*$",
+    min_len: 7,
+    max_len: 24,
+  }];
+
+}
+
+message AuthenticationResponse {
+  string authorization_token = 1 [json_name = "authorization_token"];
+  string message = 2;
+  User user = 3;
+}

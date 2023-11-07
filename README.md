@@ -1,6 +1,4 @@
-# v0.disism.grpc-apis
-
-## The previous version of the disism api is no longer maintained!
+# Archived!
 
 Dependency management with `buf.build`
 

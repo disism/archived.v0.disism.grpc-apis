@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package proto.saved.v1alpha1;
+option go_package = "v1alpha1/saved";
+
+import "google/protobuf/timestamp.proto";
+
+message DirData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string name = 4;
+}
+
+message FileData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string cid = 4;
+  string name = 5;
+  uint64 size = 6;
+  string caption = 7;
+}
+
+message FileWithDirs {
+  repeated DirData dirs = 1;
+  FileData file = 2;
+}

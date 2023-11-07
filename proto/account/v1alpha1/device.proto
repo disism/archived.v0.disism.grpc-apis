@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package proto.account.v1alpha1;
+option go_package = "v1alpha1/account";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "proto/account/v1alpha1/user.proto";
+
+service DeviceService {
+
+  rpc GetDevice (GetDeviceRequest) returns (GetDeviceResponse) {}
+
+  rpc GetDevices (google.protobuf.Empty) returns (GetDevicesResponse) {
+    option (google.api.http) = {
+      get: "/_accounts/v1/devices",
+    };
+  }
+
+  rpc DeleteDevice (DeleteDeviceRequest) returns (DeleteDeviceResponse) {
+    option (google.api.http) = {
+      delete: "/_accounts/v1/device/{id}",
+    };
+  }
+
+}
+
+message DeviceData {
+  uint64 id = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  string device = 4;
+  string ip = 5;
+}
+
+message GetDeviceRequest {
+  string device_id = 1;
+}
+
+message GetDevicesResponse {
+  repeated DeviceData devices = 1;
+  string message = 2;
+  uint64 device_id = 3;
+}
+
+message GetDeviceResponse {
+  DeviceData device = 1;
+  account.v1alpha1.User user = 2;
+  string message = 3;
+}
+
+message DeleteDeviceRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteDeviceResponse {
+  string message = 1;
+}

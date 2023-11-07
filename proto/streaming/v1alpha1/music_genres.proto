@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+import "google/api/annotations.proto";
+import "proto/streaming/v1alpha1/data.proto";
+
+service MusicGenreService {
+  rpc CreateGenres (CreateGenresRequest) returns (CreateGenresResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics/genres",
+      body: "*"
+    };
+  }
+
+  rpc SearchGenres (SearchGenresRequest) returns (SearchGenresResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/musics/genres",
+    };
+  }
+}
+
+message CreateGenresRequest {
+  repeated string genres = 1;
+}
+
+message CreateGenresResponse {
+  string message = 1;
+  repeated MusicGenreData genres = 2;
+}
+
+message SearchGenresRequest {
+  string name = 1;
+}
+
+message SearchGenresResponse {
+  string message = 1;
+  repeated MusicGenreData genres = 2;
+}

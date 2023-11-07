@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package proto.streaming.v1alpha1;
+option go_package = "v1alpha1/streaming";
+import "google/api/annotations.proto";
+import "proto/streaming/v1alpha1/data.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+
+service MusicPlaylistService {
+  rpc CreatePlaylist (CreatePlaylistRequest) returns (CreatePlaylistResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics/playlists",
+      body: "*"
+    };
+  }
+
+  rpc GetPlaylists (google.protobuf.Empty) returns (GetPlaylistsResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/musics/playlists",
+    };
+  }
+  rpc GetPlaylist (GetPlaylistRequest) returns (GetPlaylistResponse) {
+    option (google.api.http) = {
+      get: "/_streaming/v1/musics/playlists/{id}",
+    };
+  }
+
+  rpc EditPlaylist (EditPlaylistRequest) returns (EditPlaylistResponse) {
+    option (google.api.http) = {
+      put: "/_streaming/v1/musics/playlists/{id}",
+      body: "*"
+    };
+  }
+
+  rpc EditPlaylistPrivate (EditPlaylistPrivateRequest) returns (EditPlaylistPrivateResponse) {
+    option (google.api.http) = {
+      patch: "/_streaming/v1/musics/playlists/{id}/private/{private}",
+      body: "*"
+    };
+  }
+
+  rpc DeletePlaylist (DeletePlaylistRequest) returns (DeletePlaylistResponse) {
+    option (google.api.http) = {
+      delete: "/_streaming/v1/musics/playlists/{id}",
+      body: "*"
+    };
+  }
+
+  rpc AddMusicToPlaylist (AddMusicToPlaylistRequest) returns (AddMusicToPlaylistResponse) {
+    option (google.api.http) = {
+      post: "/_streaming/v1/musics/playlists/{id}/musics",
+      body: "*"
+    };
+  }
+
+  rpc RemoveMusicFromPlaylist (RemoveMusicFromPlaylistRequest) returns (RemoveMusicFromPlaylistResponse) {
+    option (google.api.http) = {
+      delete: "/_streaming/v1/musics/playlists/{id}/musics",
+      body: "*"
+    };
+  }
+}
+
+
+message CreatePlaylistRequest {
+  string name = 1;
+  string description = 2;
+  uint64 cover_id = 3;
+  bool private = 4;
+}
+
+message CreatePlaylistResponse {
+  string message = 1;
+  MusicPlaylistData playlist = 2;
+}
+
+message GetPlaylistsResponse {
+  string message = 1;
+  repeated MusicPlaylistData playlists = 2;
+}
+
+message GetPlaylistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetPlaylistResponse {
+  string message = 1;
+  MusicPlaylistData playlist = 2;
+  repeated MusicData musics = 3;
+}
+
+message EditPlaylistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2;
+  string description = 3;
+  uint64 cover_id = 4;
+}
+
+message EditPlaylistResponse {
+  string message = 1;
+  MusicPlaylistData playlist = 2;
+}
+
+message EditPlaylistPrivateRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  bool private = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message EditPlaylistPrivateResponse {
+  string message = 1;
+  bool status = 2;
+}
+
+message DeletePlaylistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeletePlaylistResponse {
+  string message = 1;
+}
+
+message AddMusicToPlaylistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated string music_ids = 2;
+}
+
+message AddMusicToPlaylistResponse {
+  string message = 1;
+  MusicPlaylistData playlist = 2;
+  repeated MusicData musics = 3;
+}
+
+message RemoveMusicFromPlaylistRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated string music_ids = 2;
+}
+
+message RemoveMusicFromPlaylistResponse {
+  string message = 1;
+  MusicPlaylistData playlist = 2;
+  repeated MusicData musics = 3;
+}

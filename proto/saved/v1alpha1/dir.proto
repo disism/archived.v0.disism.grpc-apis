@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package proto.saved.v1alpha1;
+option go_package = "v1alpha1/saved";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "proto/saved/v1alpha1/data.proto";
+
+service DirectoryService {
+  rpc CreateSubdir (CreateSubdirRequest) returns (CreateSubdirResponse) {
+    option (google.api.http) = {
+      post: "/_saved/v1/dirs/{dir_id}/subdir",
+      body: "*"
+    };
+  }
+
+  rpc ListDir (ListDirRequest) returns (ListDirResponse) {
+    option (google.api.http) = {
+      get: "/_saved/v1/dirs",
+    };
+  }
+
+
+  rpc MoveDir (MoveDirRequest) returns (MoveDirResponse) {
+    option (google.api.http) = {
+      put: "/_saved/v1/dirs/{dir_id}/mv/{dest_id}",
+      body: "*"
+    };
+  }
+
+  rpc RemoveDir (RemoveDirRequest) returns (RemoveDirResponse) {
+    option (google.api.http) = {
+      delete: "/_saved/v1/dirs/{dir_id}",
+      body: "*"
+    };
+  }
+
+  rpc RenameDir (RenameDirRequest) returns (RenameDirResponse) {
+    option (google.api.http) = {
+      patch: "/_saved/v1/dirs/{dir_id}/name",
+      body: "*"
+    };
+  }
+
+  rpc AddFileToDir (AddFileToDirRequest) returns (AddFileToDirResponse) {
+    option (google.api.http) = {
+      post: "/_saved/v1/dirs/{dir_id}/files/{file_id}",
+      body: "*"
+    };
+  }
+
+  rpc RemoveFileFromDir (RemoveFileFromDirRequest) returns (RemoveFileFromDirResponse) {
+    option (google.api.http) = {
+      delete: "/_saved/v1/dirs/{dir_id}/files/{file_id}",
+      body: "*"
+    };
+  }
+}
+
+message CreateSubdirRequest {
+  uint64 dir_id = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2;
+}
+
+message CreateSubdirResponse {
+  string message = 1;
+  DirData dir = 2;
+}
+
+message ListDirRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message ListDirResponse {
+  string message = 1;
+  DirData dir = 2;
+  repeated DirData subdirs = 3;
+  repeated DirData parents = 4;
+  repeated FileData files = 5;
+}
+
+message MoveDirRequest {
+  uint64 dir_id = 1 [(google.api.field_behavior) = REQUIRED];
+  uint64 dest_id = 2;
+}
+
+message MoveDirResponse {
+  string message = 1;
+}
+
+message RemoveDirRequest {
+  uint64 dir_id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message RemoveDirResponse {
+  string message = 1;
+}
+
+message RenameDirRequest {
+  uint64 dir_id = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2;
+}
+
+message RenameDirResponse {
+  string message = 1;
+  DirData dir = 2;
+}
+
+message AddFileToDirRequest {
+  uint64 dir_id = 1 [(google.api.field_behavior) = REQUIRED];
+  uint64 file_id = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message AddFileToDirResponse {
+  string message = 1;
+  DirData dir = 2;
+  FileData file = 3;
+}
+
+message RemoveFileFromDirRequest {
+  uint64 dir_id = 1 [(google.api.field_behavior) = REQUIRED];
+  uint64 file_id = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message RemoveFileFromDirResponse {
+  string message = 1;
+}
